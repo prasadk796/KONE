@@ -1,0 +1,16 @@
+terraform_validate:
+  stage: build
+  image: hashicorp/terraform:latest
+  script:
+    - terraform init
+    - terraform validate
+
+terraform_apply:
+  stage: deploy
+  image: hashicorp/terraform:latest
+  script:
+    - terraform apply -auto-approve
+  environment:
+    name: $DEPLOY_ENV
+  rules:
+    - if: '$DEPLOY_ENV == "staging" || $DEPLOY_ENV == "production"'
