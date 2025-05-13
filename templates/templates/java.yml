@@ -1,0 +1,24 @@
+variables:
+  MAVEN_IMAGE: "maven:3.8.4-openjdk-11"
+
+stages:
+  - build
+  - test
+  - deploy
+
+maven_build:
+  stage: build
+  image: $MAVEN_IMAGE
+  script:
+    - mvn clean package -DskipTests
+  artifacts:
+    paths:
+      - target/*.jar
+
+maven_test:
+  stage: test
+  image: $MAVEN_IMAGE
+  script:
+    - mvn test
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
