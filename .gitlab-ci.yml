@@ -1,0 +1,23 @@
+stages:
+  - generate
+  - test-config
+
+variables:
+  CONFIG_FILE: "ci-config.yml"
+
+generate-pipeline:
+  stage: generate
+  image: python:3.9
+  script:
+    - python .kone-ci/utils/pipeline-generator.py $CONFIG_FILE > generated-pipeline.yml
+  artifacts:
+    paths:
+      - generated-pipeline.yml
+
+child-pipeline:
+  stage: test-config
+  trigger:
+    include:
+      - artifact: generated-pipeline.yml
+        job: generate-pipeline
+    strategy: depend
