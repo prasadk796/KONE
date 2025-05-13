@@ -1,0 +1,44 @@
+project:
+  name: "my-python-app"
+  version: "1.0.0"
+
+technology:
+  stack: "python"      
+  version: "3.9"       
+
+build:
+  type: "package"      
+  tool: "pip"          
+  commands:            
+    - "pip install -r requirements.txt"
+    - "python setup.py sdist bdist_wheel"
+
+tests:
+  unit: true         
+  integration: false  
+  coverage_threshold: 80  
+
+code_quality:
+  lint: true          
+  static_analysis: true 
+  security_scan: true  
+
+deployment:
+  method: "docker"     
+  environments:        
+    - name: "dev"
+      branch: "develop"
+    - name: "staging"
+      branch: "release/*"
+    - name: "production"
+      branch: "main"
+
+branching:
+  strategy: "gitflow"  
+  protected_branches:  
+    - "main"
+    - "develop"
+
+tagging:
+  strategy: "semver"   
+  pattern: "v*.*.*"   
