@@ -1,0 +1,28 @@
+variables:
+  PYTHON_VERSION: "3.9"
+
+stages:
+  - lint
+  - test
+  - build
+  - deploy
+
+pylint:
+  stage: lint
+  image: python:$PYTHON_VERSION
+  script:
+    - pip install pylint
+    - pylint --rcfile=.pylintrc ./src
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
+unit_test:
+  stage: test
+  image: python:$PYTHON_VERSION
+  script:
+    - pip install pytest pytest-cov
+    - pytest --cov=./src --cov-report=xml
+  coverage: '/^TOTAL.*\s+(\d+\%)$/'
+  artifacts:
+    reports:
+      cobertura: coverage.xml
