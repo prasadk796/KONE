@@ -1,0 +1,20 @@
+build_image:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "develop"'
+
+deploy_dev:
+  stage: deploy
+  image: alpine/helm:latest
+  script:
+    - helm upgrade --install my-app ./charts --values ./charts/values-$DEPLOY_ENV.yaml
+  environment:
+    name: dev
+  rules:
+    - if: '$DEPLOY_ENV == "dev"'
